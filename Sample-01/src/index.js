@@ -23,6 +23,7 @@ const providerConfig = {
   onRedirectCallback,
   authorizationParams: {
     redirect_uri: window.location.origin,
+    scope: "openid profile email offline_access",
     ...(config.audience ? { audience: config.audience } : null),
   },
 };
