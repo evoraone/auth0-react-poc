@@ -22,7 +22,7 @@ yarn install
 
 An API is configured in the Auth0 Dashboard with "Allow Offline Access" enabled.
 
-= “offline-access” is required to get the refresh token together with the access token. It might not be essential for now to think about this but, it would be better not to have long-lived access tokens but rather short-lived ones and utilize the refresh token mechanism to have more secure application.
+- “offline-access” is required to get the refresh token together with the access token. It might not be essential for now to think about this but, it would be better not to have long-lived access tokens but rather short-lived ones and utilize the refresh token mechanism to have more secure application.
 
 ### Create an Application
 
