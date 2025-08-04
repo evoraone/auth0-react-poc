@@ -6,7 +6,7 @@ import { getConfig } from "../config";
 import Loading from "../components/Loading";
 
 export const ExternalApiComponent = () => {
-  const { coreUrl } = getConfig();
+  const { apiGateway } = getConfig();
 
   const [state, setState] = useState({
     showResult: false,
@@ -36,7 +36,7 @@ export const ExternalApiComponent = () => {
         apiMessage: {},
       });
 
-      const response = await fetch(`${coreUrl}`, {
+      const response = await fetch(`${apiGateway}/public`, {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${token}`,
@@ -112,7 +112,7 @@ export const ExternalApiComponent = () => {
           color="primary"
 
           onClick={callApi}
-          disabled={!coreUrl || !canSubmit}
+          disabled={!apiGateway || !canSubmit}
         >
           POST request
         </Button>
