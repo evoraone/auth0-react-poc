@@ -2,14 +2,18 @@ import React, { useState, useEffect } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 import { jwtDecode } from "jwt-decode";
 
+import {
+  Alert
+} from "reactstrap";
+
 const API_GATEWAY = 'https://kfbkl2611c.execute-api.eu-west-2.amazonaws.com';
 
 const Home = () => {
   const [organizations, setOrganizations] = useState([]);
-  const [message, setMessage] = useState('');
+  const [message, setMessage] = useState({ text: '', type: 'info' });
   const [activeOrg, setActiveOrg] = useState(null);
 
-  const { getAccessTokenSilently, isAuthenticated, user } = useAuth0();
+  const { getAccessTokenSilently, isAuthenticated, user, loginWithRedirect } = useAuth0();
 
   useEffect(() => {
     const setOrgId = async () => {
@@ -41,13 +45,15 @@ const Home = () => {
         });
         const data = await response.json();
         setOrganizations(data);
+        setMessage({ text: '' });
 
       } catch (error) {
-        setMessage(error.message);
+        setMessage({ text: error.message, type: 'danger'});
       }
     };
 
     if (isAuthenticated) {
+      setMessage({ text: 'Loading organisations...', type: 'info'});
       getOrganizations();
     }
   }, [getAccessTokenSilently, isAuthenticated, user]);
@@ -55,7 +61,7 @@ const Home = () => {
   // This function handles the logic for switching organizations
   const handleOrgSwitch = async (newOrg) => {
     try {
-      setMessage(`Switching to ${newOrg.name}...`);
+      setMessage({ text: `Switching to ${newOrg.name}...`, type: 'info' });
       setActiveOrg(null); // Clear previous active org message
 
       const currentToken = await getAccessTokenSilently();
@@ -84,21 +90,32 @@ const Home = () => {
       const newActiveOrg = decodedToken.organization?.name;
 
       setActiveOrg(newActiveOrg);
-      setMessage(`Successfully switched to organisation: ${newActiveOrg}`);
+      setMessage({ text: `Successfully switched to organisation: ${newActiveOrg}`, type: 'success'});
 
     } catch (error) {
-      setMessage(`Failed to switch organisation: ${error.message}`);
+      setMessage({ text: `Failed to switch organisation: ${error.message}`, type: 'danger'} );
     }
   };
 
   return (
     <div className="container mt-5">
-      <h2>Switch Organisation</h2>
-      {activeOrg && <p><strong>Currently active: {activeOrg}</strong></p>}
+      {message?.text && (
+        <Alert color={message.type} className="my-2 px-2 py-2 rounded">
+          {message.text}
+        </Alert>
+      )}
 
-      {organizations.length > 0 ? (
+      {isAuthenticated ? (
+        <h2>Hello, {user.name}!</h2>
+      )
+      : (<h2>Please log in to start</h2>)
+      }
+
+      {activeOrg && <p>Your active organisation: <strong>{activeOrg}</strong></p>}
+
+      {isAuthenticated && organizations.length > 0 && (
         <div>
-          <p>Select an organisation to get a new token for:</p>
+          <hr />
           {organizations.map((org) => (
             <button
               key={org.id}
@@ -110,12 +127,7 @@ const Home = () => {
             </button>
           ))}
         </div>
-      ) : (
-        <p>Loading organisations...</p>
       )}
-
-      {/* Display success or error messages */}
-      {message && <p className="mt-3">{message}</p>}
     </div>
   );
 };
