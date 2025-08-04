@@ -26,6 +26,12 @@ export const ExternalApiComponent = () => {
 
   const { getAccessTokenSilently } = useAuth0();
 
+  const cleanQuery = (query) => {
+    let cleaned = query.trim();
+    cleaned = cleaned.replace(/(\r\n|\n|\r)/gm, ' ');
+    return cleaned;
+  };
+
   const callApi = async () => {
     try {
       const token = await getAccessTokenSilently();
@@ -42,7 +48,7 @@ export const ExternalApiComponent = () => {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',
         },
-        body: query,
+        body: cleanQuery(query),
       });
 
       const responseData = await response.json();
@@ -68,7 +74,7 @@ export const ExternalApiComponent = () => {
     }
 
     try{
-      const json = JSON.parse(value);
+      const json = JSON.parse(cleanQuery(value));
       if(json.query){
         setCanSubmit(true);
         setMessage({ text: ``} );
