@@ -42,7 +42,7 @@ To do this, first copy `src/auth_config.json.example` into a new file in the sam
   "domain": "{Auth0 > sandbox api Application DOMAIN}",
   "clientId": "{Auth0 > sandbox api Application CLIENT ID}",
   "audience": "{Auth0 > sandbox api API_IDENTIFIER}",
-  "coreUrl": "{CORE_API_HOST}/public"
+  "apiGateway": "{Ragnarok API Gateway}"
 }
 ```
 

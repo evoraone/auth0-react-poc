@@ -1,19 +1,19 @@
 import React, { useState, useEffect } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 import { jwtDecode } from "jwt-decode";
+import { getConfig } from "../config";
 
 import {
   Alert
 } from "reactstrap";
 
-const API_GATEWAY = 'https://kfbkl2611c.execute-api.eu-west-2.amazonaws.com';
-
 const Home = () => {
   const [organizations, setOrganizations] = useState([]);
   const [message, setMessage] = useState({ text: '', type: 'info' });
   const [activeOrg, setActiveOrg] = useState(null);
+  const { apiGateway } = getConfig();
 
-  const { getAccessTokenSilently, isAuthenticated, user, loginWithRedirect } = useAuth0();
+  const { getAccessTokenSilently, isAuthenticated, user } = useAuth0();
 
   useEffect(() => {
     const setOrgId = async () => {
@@ -35,7 +35,7 @@ const Home = () => {
         console.log("calling getOrganizations!")
         const token = await getAccessTokenSilently();
 
-        const response = await fetch(`${API_GATEWAY}/auth/organizations`, {
+        const response = await fetch(`${apiGateway}/auth/organizations`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -67,7 +67,7 @@ const Home = () => {
       const currentToken = await getAccessTokenSilently();
 
       // 1. Ask the backend for permission to switch
-      await fetch(`${API_GATEWAY}/auth/prepare-switch`, {
+      await fetch(`${apiGateway}/auth/prepare-switch`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
