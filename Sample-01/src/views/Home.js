@@ -45,7 +45,9 @@ const Home = () => {
         });
 
         const data = await response.json();
-        setOrganisations(data);
+        const orgs = data.data.map((item) => item.organisation );
+        setOrganisations(orgs);
+
         setMessage({ text: '' });
 
       } catch (error) {
