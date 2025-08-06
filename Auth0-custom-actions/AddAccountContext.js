@@ -67,9 +67,9 @@ exports.onExecutePostLogin = async (event, api) => {
       return;
     }
     
-    const { accountId, organization, roles, isSystemLevel } = await response.json();
+    const { accountId, organisation, roles, isSystemLevel } = await response.json();
     console.log("accountId: ", accountId);
-    console.log("org: ", organization);
+    console.log("org: ", organisation);
     console.log("roles: ", roles);
     console.log("isSystemLevel: ", isSystemLevel);
 
@@ -77,11 +77,15 @@ exports.onExecutePostLogin = async (event, api) => {
     api.idToken.setCustomClaim('metry_user', true);
     api.idToken.setCustomClaim('metry', "ABCDXYZ");
 
+    // accessToken is used by lambda middleware
+    // idToken is used in the FE (eliminates the need to decode access token)
     if(accountId){
+      api.accessToken.setCustomClaim(`account_id`, accountId);
       api.idToken.setCustomClaim(`account_id`, accountId);
     }
-    if (organization) {
-      api.idToken.setCustomClaim(`organization`, organization);
+    if (organisation) {
+      api.accessToken.setCustomClaim(`organisation`, organisation);
+      api.idToken.setCustomClaim(`organszation`, organisation);
     }
     if (roles && roles.length > 0) {
       api.accessToken.setCustomClaim(`account_roles`, roles);
