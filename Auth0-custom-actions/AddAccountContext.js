@@ -67,23 +67,29 @@ exports.onExecutePostLogin = async (event, api) => {
       return;
     }
     
-    const { accountId, organization_id, roles, isSystemLevel } = await response.json();
+    const { accountId, organization, roles, isSystemLevel } = await response.json();
     console.log("accountId: ", accountId);
-    console.log("orgId: ", organization_id);
+    console.log("org: ", organization);
     console.log("roles: ", roles);
     console.log("isSystemLevel: ", isSystemLevel);
 
+    // dummy to make Aeris happy
+    api.idToken.setCustomClaim('metry_user', true);
+    api.idToken.setCustomClaim('metry', "ABCDXYZ");
+
     if(accountId){
-      api.accessToken.setCustomClaim(`account_id`, accountId);
+      api.idToken.setCustomClaim(`account_id`, accountId);
     }
-    if (organization_id) {
-      api.accessToken.setCustomClaim(`organization_id`, organization_id);
+    if (organization) {
+      api.idToken.setCustomClaim(`organization`, organization);
     }
     if (roles && roles.length > 0) {
       api.accessToken.setCustomClaim(`account_roles`, roles);
+      api.idToken.setCustomClaim(`account_roles`, roles);
     }
     if(isSystemLevel){
       api.accessToken.setCustomClaim(`isSystemLevel`, isSystemLevel);
+      api.idToken.setCustomClaim(`isSystemLevel`, isSystemLevel);
     }
   } catch (error) {
     console.error("Error calling the backend context hook:", error);
