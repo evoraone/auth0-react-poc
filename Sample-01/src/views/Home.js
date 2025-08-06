@@ -8,7 +8,7 @@ import {
 } from "reactstrap";
 
 const Home = () => {
-  const [organizations, setOrganizations] = useState([]);
+  const [organisations, setOrganisations] = useState([]);
   const [message, setMessage] = useState({ text: '', type: 'info' });
   const [activeOrg, setActiveOrg] = useState(null);
   const { apiGateway } = getConfig();
@@ -19,7 +19,7 @@ const Home = () => {
     const setOrgId = async () => {
       const token = await getAccessTokenSilently();
       const decodedToken = jwtDecode(token);
-      const newActiveOrg = decodedToken.organization?.name;
+      const newActiveOrg = decodedToken.organisation?.name;
 
       setActiveOrg(newActiveOrg);
     }
@@ -28,14 +28,14 @@ const Home = () => {
     }
   }, [getAccessTokenSilently, isAuthenticated]);
 
-  // This function runs once to fetch the user's available organizations
+  // This function runs once to fetch the user's available organisations
   useEffect(() => {
-    const getOrganizations = async () => {
+    const getOrganisations = async () => {
       try {
-        console.log("calling getOrganizations!")
+        console.log("calling getOrganisations!")
         const token = await getAccessTokenSilently();
 
-        const response = await fetch(`${apiGateway}/auth/organizations`, {
+        const response = await fetch(`${apiGateway}/auth/organisations`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -43,8 +43,9 @@ const Home = () => {
           },
           body: JSON.stringify({ user_email: user.email }),
         });
+
         const data = await response.json();
-        setOrganizations(data);
+        setOrganisations(data);
         setMessage({ text: '' });
 
       } catch (error) {
@@ -54,11 +55,11 @@ const Home = () => {
 
     if (isAuthenticated) {
       setMessage({ text: 'Loading organisations...', type: 'info'});
-      getOrganizations();
+      getOrganisations();
     }
   }, [getAccessTokenSilently, isAuthenticated, user]);
 
-  // This function handles the logic for switching organizations
+  // This function handles the logic for switching organisations
   const handleOrgSwitch = async (newOrg) => {
     try {
       setMessage({ text: `Switching to ${newOrg.name}...`, type: 'info' });
@@ -73,21 +74,21 @@ const Home = () => {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${currentToken}`,
         },
-        body: JSON.stringify({ organization_id: newOrg.id, user_email: user.email }),
+        body: JSON.stringify({ organisation_id: newOrg.id, user_email: user.email }),
       });
 
       // await logout({ openUrl: false });
       // 2. If backend approves, get a new token from Auth0 with the new context
       const newToken = await getAccessTokenSilently({
         authorizationParams: {
-          'organization_id': newOrg.id,
+          'organisation_id': newOrg.id,
         },
         cacheMode: 'off' // Ensures we get a fresh token
       });
 
-      // 3. Decode the new token to display the active organization
+      // 3. Decode the new token to display the active organisation
       const decodedToken = jwtDecode(newToken);
-      const newActiveOrg = decodedToken.organization?.name;
+      const newActiveOrg = decodedToken.organisation?.name;
 
       setActiveOrg(newActiveOrg);
       setMessage({ text: `Successfully switched to organisation: ${newActiveOrg}`, type: 'success'});
@@ -113,10 +114,10 @@ const Home = () => {
 
       {activeOrg && <p>Your active organisation: <strong>{activeOrg}</strong></p>}
 
-      {isAuthenticated && organizations.length > 0 && (
+      {isAuthenticated && organisations.length > 0 && (
         <div>
           <hr />
-          {organizations.map((org) => (
+          {organisations.map((org) => (
             <button
               key={org.id}
               className="btn btn-primary m-1"

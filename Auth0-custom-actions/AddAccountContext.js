@@ -41,7 +41,7 @@ exports.onExecutePostLogin = async (event, api) => {
     return;
   }
 
-  const orgIdFromFrontend = event.request?.query?.organization_id ?? null;
+  const orgIdFromFrontend = event.request?.query?.organisation_id ?? null;
   console.log("orgIdFromFrontend: ", JSON.stringify(orgIdFromFrontend));
 
   try {
@@ -50,7 +50,7 @@ exports.onExecutePostLogin = async (event, api) => {
     };
 
     if (orgIdFromFrontend) {
-      requestBody.organization_id = orgIdFromFrontend;
+      requestBody.organisation_id = orgIdFromFrontend;
     }
 
     const response = await fetch(`${BACKEND_URL}`, {
